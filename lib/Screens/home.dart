@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_my_own/MongoDBHome.dart';
+import 'package:flutter_my_own/Screens/card-view.dart';
 import 'package:flutter_my_own/dbHelper/mongodbhome.dart';
 import 'package:mongo_dart/mongo_dart.dart' as M;
 
@@ -15,6 +16,8 @@ enum WhyFarther { delete }
 class _HomeState extends State<Home> {
   var title = new TextEditingController();
   var subtitle = new TextEditingController();
+  bool favorite = false;
+
   var _like = 0;
   @override
   Widget build(BuildContext context) {
@@ -54,18 +57,21 @@ class _HomeState extends State<Home> {
               builder: (BuildContext context) {
                 return AlertDialog(
                   insetPadding: EdgeInsets.all(15.0),
-                  title: Text('Add Notes'),
+                  title: Text('Добавить заметку'),
                   content: SizedBox(
                     height: 250,
                     child: Column(
                       children: [
                         TextField(
+                          maxLength: 25,
                           controller: title,
-                          decoration: InputDecoration(labelText: "Title"),
+                          decoration: InputDecoration(labelText: "Титул"),
                         ),
                         TextField(
+                          maxLines: null,
                           controller: subtitle,
-                          decoration: InputDecoration(labelText: "Subtitle"),
+                          decoration:
+                              InputDecoration(labelText: "Текст заметки"),
                         ),
                       ],
                     ),
@@ -76,7 +82,7 @@ class _HomeState extends State<Home> {
                         _insertData(title.text, subtitle.text);
                         setState(() {});
                       },
-                      child: Text("Add"),
+                      child: Text("Добавить"),
                     ),
                   ],
                 );
@@ -90,41 +96,61 @@ class _HomeState extends State<Home> {
   }
 
   Widget homeCard(MongoDbModelHome data) {
-    return Card(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "${data.title}",
-                style: TextStyle(fontSize: 18),
-              ),
-              Padding(padding: EdgeInsets.only(top: 15.0)),
-              Text("${data.subtitle}"),
-              Container(
-                width: 100,
-                child: Wrap(
-                  children: [
-                    IconButton(
-                      onPressed: () async {
-                        await MongoDatabaseHome.delete(data);
-                        setState(() {});
-                      },
-                      color: Colors.redAccent,
-                      icon: Icon(Icons.delete),
+    return SizedBox(
+      height: double.infinity,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CardView(
+                        cardTitle: data.title,
+                        cardSubtitle: data.subtitle,
+                      )));
+        },
+        child: Card(
+          semanticContainer: true,
+          // clipBehavior: Clip.antiAliasWithSaveLayer,
+          elevation: 20,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "${data.title}",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  Padding(padding: EdgeInsets.only(top: 15.0)),
+                  Text("${data.subtitle}"),
+                  Container(
+                    width: 100,
+                    child: Wrap(
+                      children: [
+                        IconButton(
+                          onPressed: () async {
+                            await MongoDatabaseHome.delete(data);
+                            setState(() {});
+                          },
+                          color: Colors.redAccent,
+                          icon: Icon(Icons.delete),
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              // _likesCounter();
+                            },
+                            icon: Icon(Icons.favorite)),
+                      ],
                     ),
-                    IconButton(
-                        onPressed: () {
-                          // _likesCounter();
-                        },
-                        icon: Icon(Icons.favorite)),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
