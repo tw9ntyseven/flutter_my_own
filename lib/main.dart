@@ -3,6 +3,7 @@ import 'package:flutter_my_own/Screens/app.dart';
 import 'package:flutter_my_own/Screens/card-view.dart';
 import 'package:flutter_my_own/dbHelper/mongodb.dart';
 import 'package:flutter_my_own/dbHelper/mongodbhome.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,10 +18,11 @@ void main() async {
     initialRoute: '/',
     routes: {
       '/': (context) => App(),
-      '/card-view': (context) => CardView(
-            cardTitle: '',
-            cardSubtitle: '',
-          ),
+      // '/card-view': (context) => CardView(
+      //       cardTitle: '',
+      //       cardSubtitle: '',
+      //       deleteCard: '',
+      //     ),
       // '/todo': (context) => Home(),
     },
   ));

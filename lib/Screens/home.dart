@@ -35,14 +35,16 @@ class _HomeState extends State<Home> {
               if (snapshot.hasData) {
                 var totalData = snapshot.data.length;
                 print("Total Data" + totalData.toString());
-                return GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2),
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (context, index) {
-                      return homeCard(
-                          MongoDbModelHome.fromJson(snapshot.data[index]));
-                    });
+                return Container(
+                  child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, childAspectRatio: (1 / 1.1)),
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        return homeCard(
+                            MongoDbModelHome.fromJson(snapshot.data[index]));
+                      }),
+                );
               } else {
                 return Text("No contacts found");
               }
@@ -55,36 +57,51 @@ class _HomeState extends State<Home> {
           showDialog(
               context: context,
               builder: (BuildContext context) {
-                return AlertDialog(
+                return Dialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0)),
                   insetPadding: EdgeInsets.all(15.0),
-                  title: Text('Добавить заметку'),
-                  content: SizedBox(
-                    height: 250,
-                    child: Column(
-                      children: [
-                        TextField(
-                          maxLength: 25,
-                          controller: title,
-                          decoration: InputDecoration(labelText: "Титул"),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: SizedBox(
+                      height: 500, // rewrite
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Text("Добавить заметку",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w700)),
+                            Padding(padding: EdgeInsets.only(bottom: 20)),
+                            TextField(
+                              maxLength: 25,
+                              controller: title,
+                              decoration: InputDecoration(labelText: "Титул"),
+                            ),
+                            TextField(
+                              maxLines: null,
+                              controller: subtitle,
+                              decoration:
+                                  InputDecoration(labelText: "Текст заметки"),
+                            ),
+                            Padding(padding: EdgeInsets.only(bottom: 20)),
+                            Align(
+                              alignment: FractionalOffset.bottomCenter,
+                              child: SizedBox(
+                                width: 320.0,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    _insertData(title.text, subtitle.text);
+                                    setState(() {});
+                                  },
+                                  child: Text("Добавить"),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
-                        TextField(
-                          maxLines: null,
-                          controller: subtitle,
-                          decoration:
-                              InputDecoration(labelText: "Текст заметки"),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () {
-                        _insertData(title.text, subtitle.text);
-                        setState(() {});
-                      },
-                      child: Text("Добавить"),
-                    ),
-                  ],
                 );
               });
           setState(() {});
@@ -96,35 +113,33 @@ class _HomeState extends State<Home> {
   }
 
   Widget homeCard(MongoDbModelHome data) {
-    return SizedBox(
-      height: double.infinity,
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => CardView(
-                        cardTitle: data.title,
-                        cardSubtitle: data.subtitle,
-                      )));
-        },
-        child: Card(
-          semanticContainer: true,
-          // clipBehavior: Clip.antiAliasWithSaveLayer,
-          elevation: 20,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CardView(
+                      cardTitle: data.title,
+                      cardSubtitle: data.subtitle,
+                    )));
+      },
+      child: Card(
+        semanticContainer: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  Padding(padding: EdgeInsets.only(top: 10.0)),
                   Text(
                     "${data.title}",
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                   ),
                   Padding(padding: EdgeInsets.only(top: 15.0)),
                   Text("${data.subtitle}"),

@@ -5,9 +5,13 @@ import '../MongoDBHome.dart';
 
 class CardView extends StatefulWidget {
   final String cardTitle;
-  final String cardSubtitle;
-  CardView({Key? key, required this.cardTitle, required this.cardSubtitle})
-      : super(key: key);
+  String cardSubtitle;
+
+  CardView({
+    Key? key,
+    required this.cardTitle,
+    required this.cardSubtitle,
+  }) : super(key: key);
 
   @override
   State<CardView> createState() => _CardViewState();
@@ -24,28 +28,30 @@ class _CardViewState extends State<CardView> {
         backgroundColor: Colors.black,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            TextField(
+            TextFormField(
+              onChanged: (text) {},
+              // initialValue: 'hello',
               decoration: InputDecoration(
                 border: InputBorder.none,
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black54)),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.blueGrey)),
                 hintText: widget.cardSubtitle,
               ),
-              maxLines: null,
+              maxLines: 30,
               controller: notes,
               // decoration: InputDecoration(labelText: cardSubtitle),
             ),
+            // Text(deleteCard),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // await MongoDatabaseHome.delete(data);
+          // await MongoDatabaseHome.delete();
+
           setState(() {});
         },
         child: Icon(Icons.delete),
